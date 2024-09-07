@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -13,13 +14,28 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
-    private String cpf;
-    private LocalDate dataNascimento;
-    private String logradouro;
-    private String complemento;
-    private String cep;
-    private String telefone;
-    private String email;
 
+    @Column(name = "nome")
+    private String nome;
+
+    @Column(name = "cpf")
+    private String cpf;
+
+    @Column(name = "dataNascimento")
+    private LocalDate dataNascimento;
+
+    @Column(name = "logradouro")
+    private String logradouro;
+
+    @Column(name = "complemento")
+    private String complemento;
+
+    @Column(name = "cep")
+    private String cep;
+
+    @Column(name = "telefone")
+    private String telefone;
+
+    @Column(name = "email")
+    private String email;
 }

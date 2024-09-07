@@ -3,6 +3,7 @@ package tcc.fundatec.org.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.model.Estabelecimento;
 import tcc.fundatec.org.service.EstabelecimentoService;
 
@@ -21,6 +22,11 @@ public class EstabelecimentoController {
         return estabelecimentoService.findAll();
     }
 
+    @GetMapping("/buscarpornome")
+    public List<Estabelecimento> searchEstabelecimentoByName(@RequestParam String nome) {
+        return estabelecimentoService.findByNome(nome);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Estabelecimento> getEstabelecimentoById(@PathVariable Long id) {
         Optional<Estabelecimento> estabelecimento = estabelecimentoService.findById(id);
@@ -28,22 +34,20 @@ public class EstabelecimentoController {
     }
 
     @PostMapping
-    public Estabelecimento createEstabelecimento(@RequestBody Estabelecimento estabelecimento) {
-        return estabelecimentoService.save(estabelecimento);
+    public ResponseEntity<Estabelecimento> createEstabelecimento(@RequestBody Estabelecimento estabelecimento) {
+        Estabelecimento created = estabelecimentoService.save(estabelecimento);
+        return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Estabelecimento> updateEstabelecimento(@PathVariable Long id, @RequestBody Estabelecimento estabelecimentoDetails) {
         Optional<Estabelecimento> estabelecimento = estabelecimentoService.findById(id);
-
         if (estabelecimento.isPresent()) {
-            Estabelecimento updatedEstabelecimento = estabelecimento.get();
-            updatedEstabelecimento.setRazaoSocial(estabelecimentoDetails.getRazaoSocial());
-            updatedEstabelecimento.setCnpj(estabelecimentoDetails.getCnpj());
-            updatedEstabelecimento.setLogradouro(estabelecimentoDetails.getLogradouro());
-            updatedEstabelecimento.setContato(estabelecimentoDetails.getContato());
-            // Atualizar outros campos conforme necessário...
-            return ResponseEntity.ok(estabelecimentoService.save(updatedEstabelecimento));
+            Estabelecimento updated = estabelecimento.get();
+            updated.setNome(estabelecimentoDetails.getNome());
+            updated.setEndereco(estabelecimentoDetails.getEndereco());
+            updated.setContato(estabelecimentoDetails.getContato());
+            return ResponseEntity.ok(estabelecimentoService.save(updated));
         } else {
             return ResponseEntity.notFound().build();
         }

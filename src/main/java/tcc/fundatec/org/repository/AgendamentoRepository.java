@@ -1,8 +1,12 @@
 package tcc.fundatec.org.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import tcc.fundatec.org.model.Agendamento;
 
-public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
+import java.util.List;
 
+@Repository
+public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
+    List<Agendamento> findByClienteNomeContainingIgnoreCase(String nomeCliente);
 }

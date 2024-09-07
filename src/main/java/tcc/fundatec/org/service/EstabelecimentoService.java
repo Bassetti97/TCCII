@@ -2,6 +2,7 @@ package tcc.fundatec.org.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.model.Estabelecimento;
 import tcc.fundatec.org.repository.EstabelecimentoRepository;
 
@@ -28,5 +29,9 @@ public class EstabelecimentoService {
 
     public void deleteById(Long id) {
         estabelecimentoRepository.deleteById(id);
+    }
+
+    public List<Estabelecimento> findByNome(String nome) {
+        return estabelecimentoRepository.findByNomeContainingIgnoreCase(nome);
     }
 }
