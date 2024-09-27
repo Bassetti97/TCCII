@@ -4,25 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tcc.fundatec.org.model.Estabelecimento;
+import tcc.fundatec.org.model.Cliente;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EstabelecimentoResponse {
+public class AgendamentoClienteResponse {
 
     private Long id;
     private String nome;
-    private String endereco;
-    private String contato;
 
-    public Estabelecimento toEstabelecimento() {
-        return Estabelecimento.builder()
+    public Cliente toCliente() {
+        return Cliente.builder()
                 .id(id)
                 .nome(nome)
-                .endereco(endereco)
-                .contato(contato)
                 .build();
     }
 }

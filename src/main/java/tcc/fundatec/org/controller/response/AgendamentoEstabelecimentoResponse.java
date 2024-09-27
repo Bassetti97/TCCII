@@ -10,19 +10,15 @@ import tcc.fundatec.org.model.Estabelecimento;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EstabelecimentoResponse {
+public class AgendamentoEstabelecimentoResponse {
 
     private Long id;
     private String nome;
-    private String endereco;
-    private String contato;
 
     public Estabelecimento toEstabelecimento() {
         return Estabelecimento.builder()
                 .id(id)
                 .nome(nome)
-                .endereco(endereco)
-                .contato(contato)
                 .build();
     }
 }

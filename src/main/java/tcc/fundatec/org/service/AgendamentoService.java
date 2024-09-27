@@ -3,9 +3,7 @@ package tcc.fundatec.org.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tcc.fundatec.org.controller.request.AgendamentoRequest;
-import tcc.fundatec.org.controller.response.AgendamentoResponse;
-import tcc.fundatec.org.controller.response.ClienteResponse;
-import tcc.fundatec.org.controller.response.EstabelecimentoResponse;
+import tcc.fundatec.org.controller.response.*;
 import tcc.fundatec.org.model.Agendamento;
 import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.model.Estabelecimento;
@@ -44,6 +42,7 @@ public class AgendamentoService {
         if (request.getClienteId() == null || request.getEstabelecimentoId() == null) {
             throw new RuntimeException("Cliente ID e Estabelecimento ID não podem ser nulos");
         }
+
         Cliente cliente = clienteRepository.findById(request.getClienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Estabelecimento estabelecimento = estabelecimentoRepository.findById(request.getEstabelecimentoId())
@@ -51,13 +50,19 @@ public class AgendamentoService {
 
         Agendamento agendamento = Agendamento.builder()
                 .dataHorario(request.getDataHorario())
+                .tipoServico(request.getTipoServico())
                 .cliente(cliente)
                 .estabelecimento(estabelecimento)
                 .build();
 
         Agendamento savedAgendamento = agendamentoRepository.save(agendamento);
+
         return toResponse(savedAgendamento);
     }
+
+
+
+
 
     public void deleteById(Long id) {
         agendamentoRepository.deleteById(id);
@@ -77,6 +82,7 @@ public class AgendamentoService {
 
             // Atualiza o agendamento com os dados do request
             existingAgendamento.setDataHorario(request.getDataHorario());
+            existingAgendamento.setTipoServico(request.getTipoServico());
             existingAgendamento.setCliente(clienteRepository.findById(request.getClienteId())
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado")));
             existingAgendamento.setEstabelecimento(estabelecimentoRepository.findById(request.getEstabelecimentoId())
@@ -89,11 +95,12 @@ public class AgendamentoService {
             return AgendamentoResponse.builder()
                     .id(updatedAgendamento.getId())
                     .dataHorario(updatedAgendamento.getDataHorario())
-                    .cliente(ClienteResponse.builder()
+                    .tipoServico(updatedAgendamento.getTipoServico())
+                    .cliente(AgendamentoClienteResponse.builder()
                             .id(updatedAgendamento.getCliente().getId())
                             .nome(updatedAgendamento.getCliente().getNome())
                             .build())
-                    .estabelecimento(EstabelecimentoResponse.builder()
+                    .estabelecimento(AgendamentoEstabelecimentoResponse.builder()
                             .id(updatedAgendamento.getEstabelecimento().getId())
                             .nome(updatedAgendamento.getEstabelecimento().getNome())
                             .build())
@@ -103,19 +110,21 @@ public class AgendamentoService {
         }
     }
 
-
     private AgendamentoResponse toResponse(Agendamento agendamento) {
         return AgendamentoResponse.builder()
                 .id(agendamento.getId())
                 .dataHorario(agendamento.getDataHorario())
-                .cliente(ClienteResponse.builder()
+                .tipoServico(agendamento.getTipoServico())
+                .cliente(AgendamentoClienteResponse.builder()
                         .id(agendamento.getCliente().getId())
                         .nome(agendamento.getCliente().getNome())
                         .build())
-                .estabelecimento(EstabelecimentoResponse.builder()
+                .estabelecimento(AgendamentoEstabelecimentoResponse.builder()
                         .id(agendamento.getEstabelecimento().getId())
                         .nome(agendamento.getEstabelecimento().getNome())
                         .build())
                 .build();
     }
+
+
 }

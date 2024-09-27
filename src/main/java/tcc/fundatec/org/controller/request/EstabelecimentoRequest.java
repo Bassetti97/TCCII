@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AgendamentoRequest {
+public class EstabelecimentoRequest {
 
-    private LocalDateTime dataHorario;
-    private String tipoServico;
-    private Long clienteId;
-    private Long estabelecimentoId;
+    private Long id;
+    private String nome;
+    private String endereco;
+    private String contato;
 }

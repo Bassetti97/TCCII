@@ -16,11 +16,25 @@ public class ClienteResponse {
 
     private Long id;
     private String nome;
+    private String cpf;
+    private LocalDate dataNascimento;
+    private String logradouro;
+    private String complemento;
+    private String cep;
+    private String telefone;
+    private String email;
 
     public Cliente toCliente() {
         return Cliente.builder()
                 .id(id)
                 .nome(nome)
+                .cpf(cpf)
+                .dataNascimento(dataNascimento)
+                .logradouro(logradouro)
+                .complemento(complemento)
+                .cep(cep)
+                .telefone(telefone)
+                .email(email)
                 .build();
     }
 }

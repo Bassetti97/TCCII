@@ -23,6 +23,9 @@ public class Agendamento {
     @Column(name = "data_horario")
     private LocalDateTime dataHorario;
 
+    @Column(name = "tipo_servico")
+    private String tipoServico;
+
     @ManyToOne
     @JoinColumn(name = "cliente", referencedColumnName = "id")
     private Cliente cliente;

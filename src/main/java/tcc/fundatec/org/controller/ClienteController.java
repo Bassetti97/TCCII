@@ -1,8 +1,11 @@
 package tcc.fundatec.org.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tcc.fundatec.org.controller.request.ClienteRequest;
+import tcc.fundatec.org.controller.response.ClienteResponse;
 import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.service.ClienteService;
 
@@ -16,54 +19,48 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping
-    public List<Cliente> getAllClientes() {
-        return clienteService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
-        Optional<Cliente> cliente = clienteService.findById(id);
-        return cliente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @PostMapping
-    public Cliente createCliente(@RequestBody Cliente cliente) {
-        return clienteService.save(cliente);
+    public ResponseEntity<ClienteResponse> save(@RequestBody ClienteRequest request) {
+        ClienteResponse clienteResponse = clienteService.save(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody Cliente clienteDetails) {
-        Optional<Cliente> cliente = clienteService.findById(id);
-
-        if (cliente.isPresent()) {
-            Cliente updatedCliente = cliente.get();
-            updatedCliente.setNome(clienteDetails.getNome());
-            updatedCliente.setCpf(clienteDetails.getCpf());
-            updatedCliente.setDataNascimento(clienteDetails.getDataNascimento());
-            updatedCliente.setLogradouro(clienteDetails.getLogradouro());
-            updatedCliente.setComplemento(clienteDetails.getComplemento());
-            updatedCliente.setCep(clienteDetails.getCep());
-            updatedCliente.setTelefone(clienteDetails.getTelefone());
-            updatedCliente.setEmail(clienteDetails.getEmail());
-            return ResponseEntity.ok(clienteService.save(updatedCliente));
-        } else {
+    public ResponseEntity<ClienteResponse> update(@PathVariable Long id, @RequestBody ClienteRequest request) {
+        try {
+            ClienteResponse clienteResponse = clienteService.update(id, request);
+            return ResponseEntity.ok(clienteResponse);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ClienteResponse>> findAll() {
+        List<ClienteResponse> clientes = clienteService.findAll();
+        return ResponseEntity.ok(clientes);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> findById(@PathVariable Long id) {
+        Optional<ClienteResponse> cliente = clienteService.findById(id);
+        return cliente.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
-        if (clienteService.findById(id).isPresent()) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        try {
             clienteService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @GetMapping("/buscarpornome")
-    public List<Cliente> searchClientesByName(@RequestParam String nome) {
-        return clienteService.findByNome(nome);
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<List<ClienteResponse>> findByNome(@PathVariable String nome) {
+        List<ClienteResponse> clientes = clienteService.findByNome(nome);
+        return ResponseEntity.ok(clientes);
     }
 }

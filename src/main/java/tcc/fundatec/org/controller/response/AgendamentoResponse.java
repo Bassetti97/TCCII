@@ -16,14 +16,17 @@ public class AgendamentoResponse {
 
     private Long id;
     private LocalDateTime dataHorario;
-    private ClienteResponse cliente;
-    private EstabelecimentoResponse estabelecimento;
+    private String tipoServico;
+    private AgendamentoClienteResponse cliente;
+    private AgendamentoEstabelecimentoResponse estabelecimento;
 
     public Agendamento toAgendamento() {
         return Agendamento.builder()
+                .id(id)
                 .dataHorario(dataHorario)
-                .cliente(cliente.toCliente())
-                .estabelecimento(estabelecimento.toEstabelecimento())
+                .tipoServico(tipoServico)
+                .cliente(cliente != null ? cliente.toCliente() : null)
+                .estabelecimento(estabelecimento != null ? estabelecimento.toEstabelecimento() : null)
                 .build();
     }
 }
