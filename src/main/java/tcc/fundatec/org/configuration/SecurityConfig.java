@@ -1,30 +1,53 @@
 package tcc.fundatec.org.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tcc.fundatec.org.service.security.CustomUserDetailsService;
+import tcc.fundatec.org.service.security.SecurityFilter;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    SecurityFilter securityFilter;
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Criptografa a senha
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -32,21 +55,4 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Desabilita CSRF para simplicidade (não recomendado em produção)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/usuario/cadastrar").permitAll() // Permitir o registro de usuário sem autenticação
-                        .requestMatchers("/login").permitAll() // Permitir acesso ao login
-                        .anyRequest().authenticated() // Todas as outras rotas precisam de autenticação
-                )
-                .formLogin((form) -> form
-                        .loginPage("/login") // Página de login customizada
-                        .defaultSuccessUrl("/agenda", true) // Redireciona após login
-                        .permitAll()
-                )
-                .logout((logout) -> logout.permitAll()); // Permite logout
-        return http.build();
-    }
 }

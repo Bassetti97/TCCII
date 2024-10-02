@@ -60,10 +60,6 @@ public class AgendamentoService {
         return toResponse(savedAgendamento);
     }
 
-
-
-
-
     public void deleteById(Long id) {
         agendamentoRepository.deleteById(id);
     }

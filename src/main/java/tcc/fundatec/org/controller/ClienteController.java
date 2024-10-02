@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tcc.fundatec.org.controller.request.ClienteRequest;
 import tcc.fundatec.org.controller.response.ClienteResponse;
-import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.service.ClienteService;
 
 import java.util.List;

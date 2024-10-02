@@ -30,19 +30,14 @@ public class AgendamentoController {
         }
     }
 
-    /**
-     * FAZER O TESTE PRA VER SE RODA!!!
-     * @param id
-     * @param request
-     * @return
-     */
+
     @PutMapping("/{id}")
     public ResponseEntity<AgendamentoResponse> update(@PathVariable Long id, @RequestBody AgendamentoRequest request) {
         try {
             AgendamentoResponse agendamentoResponse = agendamentoService.update(id, request);
             return ResponseEntity.ok(agendamentoResponse);
         } catch (RuntimeException e) {
-            // Retorna um erro
+
             return ResponseEntity.notFound().build();
 
         }
