@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import tcc.fundatec.org.model.Cliente;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-    List<Cliente> findByNomeContainingIgnoreCase(String nome);
+    Optional<Cliente> findByNomeContainingIgnoreCase(String nome);
+
 }

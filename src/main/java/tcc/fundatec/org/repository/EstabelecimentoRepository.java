@@ -6,8 +6,9 @@ import tcc.fundatec.org.model.Cliente;
 import tcc.fundatec.org.model.Estabelecimento;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EstabelecimentoRepository extends JpaRepository<Estabelecimento, Long> {
-    List<Estabelecimento> findByNomeContainingIgnoreCase(String nome);
+    Optional<Estabelecimento> findByNomeContainingIgnoreCase(String nome);
 }

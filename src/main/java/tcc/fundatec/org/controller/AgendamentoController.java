@@ -37,9 +37,7 @@ public class AgendamentoController {
             AgendamentoResponse agendamentoResponse = agendamentoService.update(id, request);
             return ResponseEntity.ok(agendamentoResponse);
         } catch (RuntimeException e) {
-
             return ResponseEntity.notFound().build();
-
         }
     }
 

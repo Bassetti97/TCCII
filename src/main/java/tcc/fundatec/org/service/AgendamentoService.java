@@ -39,13 +39,14 @@ public class AgendamentoService {
     }
 
     public AgendamentoResponse save(AgendamentoRequest request) {
-        if (request.getClienteId() == null || request.getEstabelecimentoId() == null) {
-            throw new RuntimeException("Cliente ID e Estabelecimento ID não podem ser nulos");
+        if (request.getClienteNome() == null || request.getEstabelecimentoNome() == null) {
+            throw new RuntimeException("Cliente Nome e Estabelecimento Nome não podem ser nulos");
         }
 
-        Cliente cliente = clienteRepository.findById(request.getClienteId())
+        Cliente cliente = clienteRepository.findByNomeContainingIgnoreCase(request.getClienteNome())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-        Estabelecimento estabelecimento = estabelecimentoRepository.findById(request.getEstabelecimentoId())
+
+        Estabelecimento estabelecimento = estabelecimentoRepository.findByNomeContainingIgnoreCase(request.getEstabelecimentoNome())
                 .orElseThrow(() -> new RuntimeException("Estabelecimento não encontrado"));
 
         Agendamento agendamento = Agendamento.builder()
@@ -60,6 +61,7 @@ public class AgendamentoService {
         return toResponse(savedAgendamento);
     }
 
+
     public void deleteById(Long id) {
         agendamentoRepository.deleteById(id);
     }
@@ -71,39 +73,19 @@ public class AgendamentoService {
     }
 
     public AgendamentoResponse update(Long id, AgendamentoRequest request) {
-        try {
-            // Verifica se o agendamento existe
-            Agendamento existingAgendamento = agendamentoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        Agendamento existingAgendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
 
-            // Atualiza o agendamento com os dados do request
-            existingAgendamento.setDataHorario(request.getDataHorario());
-            existingAgendamento.setTipoServico(request.getTipoServico());
-            existingAgendamento.setCliente(clienteRepository.findById(request.getClienteId())
-                    .orElseThrow(() -> new RuntimeException("Cliente não encontrado")));
-            existingAgendamento.setEstabelecimento(estabelecimentoRepository.findById(request.getEstabelecimentoId())
-                    .orElseThrow(() -> new RuntimeException("Estabelecimento não encontrado")));
+        existingAgendamento.setDataHorario(request.getDataHorario());
+        existingAgendamento.setTipoServico(request.getTipoServico());
+        existingAgendamento.setCliente(clienteRepository.findByNomeContainingIgnoreCase(request.getClienteNome())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado")));
+        existingAgendamento.setEstabelecimento(estabelecimentoRepository.findByNomeContainingIgnoreCase(request.getEstabelecimentoNome())
+                .orElseThrow(() -> new RuntimeException("Estabelecimento não encontrado")));
 
-            // Salva o agendamento atualizado
-            Agendamento updatedAgendamento = agendamentoRepository.save(existingAgendamento);
+        Agendamento updatedAgendamento = agendamentoRepository.save(existingAgendamento);
 
-            // Converte e retorna a resposta
-            return AgendamentoResponse.builder()
-                    .id(updatedAgendamento.getId())
-                    .dataHorario(updatedAgendamento.getDataHorario())
-                    .tipoServico(updatedAgendamento.getTipoServico())
-                    .cliente(AgendamentoClienteResponse.builder()
-                            .id(updatedAgendamento.getCliente().getId())
-                            .nome(updatedAgendamento.getCliente().getNome())
-                            .build())
-                    .estabelecimento(AgendamentoEstabelecimentoResponse.builder()
-                            .id(updatedAgendamento.getEstabelecimento().getId())
-                            .nome(updatedAgendamento.getEstabelecimento().getNome())
-                            .build())
-                    .build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Erro ao atualizar o agendamento: " + e.getMessage());
-        }
+        return toResponse(updatedAgendamento);
     }
 
     private AgendamentoResponse toResponse(Agendamento agendamento) {
@@ -121,6 +103,4 @@ public class AgendamentoService {
                         .build())
                 .build();
     }
-
-
 }

@@ -15,6 +15,6 @@ public class AgendamentoRequest {
 
     private LocalDateTime dataHorario;
     private String tipoServico;
-    private Long clienteId;
-    private Long estabelecimentoId;
+    private String clienteNome;
+    private String estabelecimentoNome;
 }
